@@ -5,7 +5,7 @@ from charmhelpers.core import hookenv
 from jujubigdata import utils
 from charmhelpers.fetch import apt_install
 from subprocess import check_call
-from charms.pig import Pig
+from charms.flink import Flink
 
 DIST_KEYS = ['vendor', 'hadoop_version', 'groups', 'users', 'dirs']
 
@@ -16,35 +16,36 @@ def get_dist_config(keys):
         get_dist_config.value = DistConfig(filename='dist.yaml', required_keys=keys)
     return get_dist_config.value
 
+flink = Flink(get_dist_config(DIST_KEYS))
 
 #@when('hadoop.installed')
-@when_not('pig.installed')
-def install_pig():
-    pig = Pig(get_dist_config(DIST_KEYS))
-    if pig.verify_resources():
-        hookenv.status_set('maintenance', 'Installing Pig')
-        pig.install()
-        set_state('pig.installed')
+@when_not('flink.installed')
+def install_flink():
+    if flink.verify_resources():
+        hookenv.status_set('maintenance', 'Installing Flink')
+        flink.install()
+        set_state('flink.installed')
 
 
-@when('pig.installed')
+@when('flink.installed')
 @when_not('hadoop.related')
 def missing_hadoop():
     hookenv.status_set('blocked', 'Waiting for relation to Hadoop')
 
 
-@when('pig.installed', 'hadoop.ready')
-@when_not('pig.configured')
-def configure_pig(*args):
-    hookenv.status_set('maintenance', 'Setting up pig')
-    pig = Pig(get_dist_config(DIST_KEYS))
-    pig.setup_pig()
-    set_state('pig.configured')
-    hookenv.status_set('active', 'Ready')
+@when('flink.installed', 'hadoop.ready')
+@when_not('flink.started')
+def configure_flink(*args):
+    hookenv.status_set('maintenance', 'Setting up flink')
+    flink.setup_flink()
+    flink.start()
+    set_state('flink.started')
+    hookenv.status_set('active', 'Ready (Flink on YARN)')
 
 
-@when('pig.configured')
+@when('flink.started')
 @when_not('hadoop.ready')
-def stop_pig():
-    remove_state('pig.configured')
+def stop_flink():
+    remove_state('flink.started')
+    flink.stop()
     hookenv.status_set('blocked', 'Waiting for Hadoop connection')

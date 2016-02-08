@@ -1,7 +1,7 @@
 options:
   output_dir: /home/ubuntu/resources
 optional_resources:
-  pig-x86_64:
-    url: http://apache.rediris.es/pig/pig-0.15.0/pig-0.15.0.tar.gz
-    hash: c52112ca618daaca298cf068e6451449fe946e8dccd812d56f8f537aa275234b
+  flink-x86_64:
+    url: http://apache.rediris.es/flink/flink-0.10.1/flink-0.10.1-bin-hadoop2-scala_2.10.tgz
+    hash: 8e18b5b29a73a75ffddfc10e600e3c76dde2871f12809d2281f7473fdaae0a48
     hash_type: sha256

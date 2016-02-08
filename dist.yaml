@@ -7,13 +7,17 @@ groups:
     - 'hadoop'
     - 'mapred'
 users:
-    pig:
+    flink:
         groups: ['hadoop', 'mapred']
 dirs:
-    pig:
-        path: '/usr/lib/pig'
-        owner: 'pig'
+    flink:
+        path: '/usr/lib/flink'
+        owner: 'flink'
         group: 'hadoop'
-    pig_conf:
-        path: '/etc/pig/conf'
+    flink_conf:
+        path: '/etc/flink/conf'
+    flink_home:
+        path: '/home/flink'
+        owner: 'flink'
+        group: 'hadoop'
 ports: {}

@@ -4,3 +4,14 @@ options:
         default: ''
         description: |
                 URL from which to fetch resources (e.g., Hadoop binaries) instead of Launchpad.
+    containers:
+        type: int
+        default: 3 
+        description: | 
+                The number of flink containers to run, which will be distributed across all slaves. 
+                An extra container will run to handle jobs
+    containermem:
+        type: int
+        default: 1024
+        description: |
+                The amount of memory to allocate to each flink container
