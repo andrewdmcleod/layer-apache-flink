@@ -1,1 +1,1 @@
-includes: ['layer:hadoop-client']
+includes: ['layer:hadoop-client', 'interface:flink']

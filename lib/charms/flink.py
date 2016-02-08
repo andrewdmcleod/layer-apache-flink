@@ -55,21 +55,28 @@ class Flink(object):
         self.stop()
         containers = hookenv.config()['containers']
         containermem = hookenv.config()['containermem']
-        utils.run_as('flink', '{}/bin/yarn-session.sh'.format(flink_home),
-                     'start', '-n', containers, '-tm', containermem, '-d', '>',
-                     '/home/flink/flink_startup.log')
-        try:
-            output = utils.run_as('flink', 'grep', 'kill', '/home/flink/flink_startup.log')
-            flink_appID = output.split(" ")[3]
-            unitdata.kv().set('flink.ID', flink_appID)
-        except: 
-            hookenv.log("Error getting flink yarn application ID - is flink running? is YARN reachable?")
+        start_flink = utils.run_as('flink', '{}/bin/yarn-session.sh'.format(flink_home),
+                     'start', '-n', containers, '-tm', containermem, '-d',
+                     capture_output=True)
+        for line in start_flink.splitlines():
+            print(line)
+            if 'kill' in line:
+                flink_appID = line.split(" ")[3]
+        unitdata.kv().set('flink.ID', flink_appID)
 
     def stop(self):
         flink_appID = unitdata.kv().get('flink.ID')
         if flink_appID:
-            utils.run_as('yarn', 'application', '-kill', flink_appID)
+            utils.run_as('flink', 'yarn', 'application', '-kill', flink_appID)
         return 
+
+    def open_ports(self):
+        for port in self.dist_config.exposed_ports('flink'):
+            hookenv.open_port(port)
+
+    def close_ports(self):
+        for port in self.dist_config.exposed_ports('flink'):
+            hookenv.close_port(port)
 
     def cleanup(self):
         self.dist_config.remove_users()

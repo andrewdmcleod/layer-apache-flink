@@ -1,7 +1,7 @@
 import jujuresources
 from charms.reactive import when, when_not
 from charms.reactive import set_state, remove_state
-from charmhelpers.core import hookenv
+from charmhelpers.core import hookenv, unitdata
 from jujubigdata import utils
 from charmhelpers.fetch import apt_install
 from subprocess import check_call
@@ -39,8 +39,10 @@ def configure_flink(*args):
     hookenv.status_set('maintenance', 'Setting up flink')
     flink.setup_flink()
     flink.start()
+    flink.open_ports()
     set_state('flink.started')
-    hookenv.status_set('active', 'Ready (Flink on YARN)')
+    flink_appID = unitdata.kv().get('flink.ID')
+    hookenv.status_set('active', 'Ready ({})'.format(flink_appID))
 
 
 @when('flink.started')
@@ -48,4 +50,16 @@ def configure_flink(*args):
 def stop_flink():
     remove_state('flink.started')
     flink.stop()
+    flink.close_ports()
     hookenv.status_set('blocked', 'Waiting for Hadoop connection')
+
+
+@when('flink.started', 'client.related')
+def client_present(client):
+    client.set_installed()
+
+
+@when('client.related')
+@when_not('flink.started')
+def client_should_stop(client):
+    client.clear_installed()

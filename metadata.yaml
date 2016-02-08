@@ -9,3 +9,5 @@ provides:
   hadoop:
     interface: hadoop-plugin
     scope: container
+  client:
+    interface: flink
