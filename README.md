@@ -73,10 +73,5 @@ SSH to the Flink unit and test in MapReduce mode as follows:
 
 ## Contact Information
 
-- <bigdata@lists.ubuntu.com>
+- <andrewdmcleod@gibhut>
 
-
-## Help
-
-- [Juju mailing list](https://lists.ubuntu.com/mailman/listinfo/juju)
-- [Juju community](https://jujucharms.com/community)
