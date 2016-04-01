@@ -73,5 +73,5 @@ SSH to the Flink unit and test in MapReduce mode as follows:
 
 ## Contact Information
 
-- <andrewdmcleod@gibhut>
+- bigdata@lists.ubuntu.com
 
